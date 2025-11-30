@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f0f0f0;
+        }
+        .dark-theme {
+            background: #121212;
+            color: white;
+        }
+        .dark-box {
+            background: #1e1e1e !important;
+            color: white;
+        }
+        input, select {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        nav {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        nav a {
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
+        .news-item {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #e3e3e3;
+        }
+        .dark-theme .news-item {
+            background: #2a2a2a;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginPage" class="container">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Usuário" />
+    <input type="password" id="password" placeholder="Senha" />
+    <button onclick="login()">Entrar</button>
+</div>
+
+<div id="mainPage" class="container hidden">
+    <h2 id="welcomeMsg"></h2>
+    <p id="visitCount"></p>
+
+    <label>Tema:</label>
+    <select id="themeSelector" onchange="changeTheme()">
+        <option value="light">Claro</option>
+        <option value="dark">Escuro</option>
+    </select>
+
+    <nav>
+        <a onclick="showNews()">Notícias</a>
+        <a onclick="logout()">Logout</a>
+    </nav>
+</div>
+
+<div id="newsPage" class="container hidden">
+    <h2>Notícias</h2>
+
+    <label>Categoria:</label>
+    <select id="categorySelector" onchange="renderNews()">
+        <option value="esportes">Esportes</option>
+        <option value="entretenimento">Entretenimento</option>
+        <option value="lazer">Lazer</option>
+    </select>
+
+    <div id="newsList"></div>
+
+    <nav>
+        <a onclick="backToMain()">Voltar</a>
+        <a onclick="logout()">Logout</a>
+    </nav>
+</div>
+
+<script>
+    const fixedUser = "admin";
+    const fixedPassword = "1234";
+
+    function login() {
+        const user = document.getElementById("username").value;
+        const pass = document.getElementById("password").value;
+
+        if (user === fixedUser && pass === fixedPassword) {
+            sessionStorage.setItem("user", user);
+            sessionStorage.setItem("visits", 0);
+            loadTheme();
+            showMain();
+        }
+    }
+
+    function showMain() {
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("newsPage").classList.add("hidden");
+        document.getElementById("mainPage").classList.remove("hidden");
+
+        let user = sessionStorage.getItem("user");
+        let visits = Number(sessionStorage.getItem("visits")) + 1;
+        sessionStorage.setItem("visits", visits);
+
+        document.getElementById("welcomeMsg").innerText = "Boas-vindas, " + user;
+        document.getElementById("visitCount").innerText = "Acessos nesta sessão: " + visits;
+    }
+
+    function showNews() {
+        document.getElementById("mainPage").classList.add("hidden");
+        document.getElementById("newsPage").classList.remove("hidden");
+
+        const savedCategory = localStorage.getItem("category");
+        if (savedCategory) {
+            document.getElementById("categorySelector").value = savedCategory;
+        }
+
+        renderNews();
+    }
+
+    function backToMain() {
+        showMain();
+    }
+
+    function renderNews() {
+        const category = document.getElementById("categorySelector").value;
+        localStorage.setItem("category", category);
+
+        const news = {
+            esportes: ["Jogo XYZ termina empatado", "Atleta ABC quebra recorde", "Time vence campeonato"],
+            entretenimento: ["Filme novo estreia amanhã", "Cantor lança álbum", "Série bate recorde"],
+            lazer: ["Parque abre nova atração", "Evento cultural no centro", "Feira gastronômica começa"]
+        };
+
+        const list = document.getElementById("newsList");
+        list.innerHTML = "";
+
+        news[category].forEach(n => {
+            const item = document.createElement("div");
+            item.className = "news-item";
+            item.innerText = n;
+            list.appendChild(item);
+        });
+    }
+
+    function changeTheme() {
+        const theme = document.getElementById("themeSelector").value;
+        applyTheme(theme);
+        localStorage.setItem("theme", JSON.stringify({ value: theme, expires: Date.now() + 1800000 }));
+    }
+
+    function loadTheme() {
+        const saved = localStorage.getItem("theme");
+        if (!saved) return;
+
+        const data = JSON.parse(saved);
+        if (Date.now() > data.expires) {
+            localStorage.removeItem("theme");
+            return;
+        }
+
+        applyTheme(data.value);
+        document.getElementById("themeSelector").value = data.value;
+    }
+
+    function applyTheme(theme) {
+        if (theme === "dark") {
+            document.body.classList.add("dark-theme");
+        } else {
+            document.body.classList.remove("dark-theme");
+        }
+    }
+
+    function logout() {
+        sessionStorage.clear();
+        location.reload();
+    }
+</script>
+
+</body>
+</html>
