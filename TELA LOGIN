@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Login com Perfis</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .box {
+            max-width: 400px;
+            margin: 60px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #aaa;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        #home {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box" id="login">
+    <h2>Login</h2>
+    <input id="user" placeholder="Usuário">
+    <input id="pass" type="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+</div>
+
+<div class="box" id="home">
+    <h2 id="welcome"></h2>
+    <p><strong>Perfil:</strong> <span id="perfil"></span></p>
+    <p><strong>Curso:</strong> <span id="curso"></span></p>
+    <p><strong>Permissões:</strong> <span id="permissoes"></span></p>
+
+    <button style="background:#d9534f" onclick="logout()">Logout</button>
+</div>
+
+<script>
+    const users = [
+        {
+            usuario: "ana",
+            senha: "123",
+            nome: "Ana Oliveira",
+            perfil: "Admin",
+            curso: "Tecnologia da Informação",
+            permissoes: "Acesso total ao sistema"
+        },
+        {
+            usuario: "bruno",
+            senha: "456",
+            nome: "Bruno Silva",
+            perfil: "Aluno",
+            curso: "Engenharia de Software",
+            permissoes: "Acesso às páginas de estudo"
+        },
+        {
+            usuario: "carla",
+            senha: "789",
+            nome: "Carla Mendes",
+            perfil: "Professor",
+            curso: "Ciência da Computação",
+            permissoes: "Gerenciar notas e conteúdos"
+        }
+    ];
+
+    function login() {
+        const u = document.get
